@@ -1,9 +1,9 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 void win() {
-	printf("You win! here is your flag");
+    printf("You win! here is your flag");
     system("/bin/cat flag.txt");
 }
 
@@ -11,14 +11,17 @@ int main() {
     int length;
     char buf[64];
 
-	scanf("%d", &length);
-	if(length >= 64) {
-		printf("message too long");
-		return 0;
-	}
+    while (1) {
+        printf("enter length\n");
 
-	read(0, buf, length);
-	printf("%s", buf);
+        scanf("%d", &length);
+        if (length >= 64) {
+            printf("message too long");
+            return 0;
+        }
 
-	return 0;
+        printf("enter buffer\n");
+        read(STDIN_FILENO, buf, (unsigned short)length);
+        printf("%s", buf);
+    }
 }
