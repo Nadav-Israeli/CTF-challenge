@@ -1,1 +1,1 @@
-CTF{test_flag}
+ICO{test_flag}
