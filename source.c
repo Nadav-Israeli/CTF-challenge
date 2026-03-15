@@ -15,13 +15,13 @@ int main() {
         printf("enter length\n");
 
         scanf("%d", &length);
-        if (length >= 64) {
+        if (length > 64) {
             printf("message too long");
             return 0;
         }
 
         printf("enter buffer\n");
-        read(STDIN_FILENO, buf, (unsigned short)length);
-        printf("%s", buf);
+        read(0, buf, (unsigned short)length);
+        printf("%s\n", buf);
     }
 }
