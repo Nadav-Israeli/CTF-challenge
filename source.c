@@ -7,6 +7,11 @@ void win() {
     system("/bin/cat flag.txt");
 }
 
+void getData(char* buf, unsigned int len) {
+    printf("enter buffer\n");
+    read(0, buf, len);
+}
+
 int main() {
     int length;
     char buf[64];
@@ -20,8 +25,7 @@ int main() {
             return 0;
         }
 
-        printf("enter buffer\n");
-        read(0, buf, (unsigned short)length);
+        getData(buf, length);
         printf("%s\n", buf);
     }
 }

