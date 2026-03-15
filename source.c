@@ -1,9 +1,10 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 
 void win() {
 	printf("You win! here is your flag");
-    system("/bin/cat flag.txt);
+    system("/bin/cat flag.txt");
 }
 
 int main() {
